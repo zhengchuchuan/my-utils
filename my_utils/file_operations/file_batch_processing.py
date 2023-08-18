@@ -1,8 +1,8 @@
 import os
 import random
+import shutil
 
 
-# 检查不同后缀的文件去除文件名后是否一一对应
 def check_file_correspondence(folder_1, folder_2):
     """
     检查不同后缀的文件去除文件名后是否一一对应
@@ -31,6 +31,28 @@ def check_file_correspondence(folder_1, folder_2):
     # 无缺失文件
     if not missing_list_2_files and not missing_list_1_files:
         print("所有文件一一对应。")
+
+
+def copy_files_from_folder(src_folder_path, dest_folder_path, file_list):
+    """
+    将文件夹下的文件,根据一个文件名列表复制到指定目录下
+    :param src_folder_path: 待复制的文件夹路径
+    :param dest_folder_path: 目标文件夹路径
+    :param file_list: 移动的文件名列表
+    :return: None
+    """
+    for file_name in file_list:
+        source_file_path = os.path.join(src_folder_path, file_name)
+
+        try:
+            # 移动文件袋指定文件夹
+            shutil.copy(source_file_path, dest_folder_path)
+        except FileNotFoundError:
+            print(f"File '{file_name}' not found in the source folder.")
+        except FileExistsError:
+            print(f"File '{file_name}' already exists in the destination folder.")
+        except Exception as e:
+            print(f"An error occurred while moving '{file_name}': {e}")
 
 
 # 划分VOC格式数据集
