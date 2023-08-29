@@ -21,7 +21,7 @@ from osgeo import gdal, gdal_array
 def read_image_with_cv2(path):
     # dtype对于tif图像需要切换成uint16
 
-    image = cv2.imdecode(np.fromfile(path, dtype=np.uint8), -1)
+    image = cv2.imdecode(np.fromfile(path, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 

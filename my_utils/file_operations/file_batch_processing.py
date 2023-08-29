@@ -1,36 +1,7 @@
 import os
 import random
 import shutil
-
-
-def check_file_correspondence(folder_1, folder_2):
-    """
-    检查不同后缀的文件去除文件名后是否一一对应
-    :param folder_1: 
-    :param folder_2: 
-    :return: 
-    """
-    # 获取文件夹下的所有文件名
-    file_list_1 = os.listdir(folder_1)
-    file_list_2 = os.listdir(folder_2)
-    # 分离文件名(路径名)和拓展名,return [文件名,带点后缀名如.jpg]
-    file_name_list_1, file_suffix_list_1 = [os.path.splitext(file) for file in file_list_1]
-    file_name_list_2, file_suffix_list_2 = [os.path.splitext(file) for file in file_list_2]
-    # 计算补集,即为缺失文件
-    missing_list_2_files = set(file_name_list_1) - set(file_name_list_2)
-    missing_list_1_files = set(file_name_list_2) - set(file_name_list_1)
-    # 有缺失文件
-    if missing_list_1_files:
-        print("{0}以下的文件缺少对应的文件:".format(folder_1))
-        for file in missing_list_1_files:
-            print(file + file_suffix_list_1)
-    if missing_list_2_files:
-        print("{0}以下的文件缺少对应的文件:".format(folder_2))
-        for file in missing_list_2_files:
-            print(file + file_suffix_list_2)
-    # 无缺失文件
-    if not missing_list_2_files and not missing_list_1_files:
-        print("所有文件一一对应。")
+from my_utils.file_operations.file_check import *
 
 
 def copy_files_from_folder(src_folder_path, dest_folder_path, file_list):
@@ -45,17 +16,38 @@ def copy_files_from_folder(src_folder_path, dest_folder_path, file_list):
         source_file_path = os.path.join(src_folder_path, file_name)
 
         try:
-            # 移动文件袋指定文件夹
-            shutil.copy(source_file_path, dest_folder_path)
-        except FileNotFoundError:
-            print(f"File '{file_name}' not found in the source folder.")
+            # 检查文件路径是否存在,不存在则创建
+            if check_file_exists(source_file_path) and check_folder_exists(dest_folder_path):
+                # 复制文件袋到指定文件夹
+                shutil.copy(source_file_path, dest_folder_path)
+        except FileExistsError:
+            print(f"File '{file_name}' already exists in the destination folder.")
+        except Exception as e:
+            print(f"An error occurred while copy '{file_name}': {e}")
+
+
+def move_files_from_folder(src_folder_path, dest_folder_path, file_list):
+    """
+    将文件夹下的文件，根据一个文件名列表移动到指定目录下
+    :param src_folder_path: 待移动的文件夹路径
+    :param dest_folder_path: 目标文件夹路径
+    :param file_list: 移动的文件名列表
+    :return: None
+    """
+    for file_name in file_list:
+        source_file_path = os.path.join(src_folder_path, file_name)
+
+        try:
+            # 检查文件路径是否存在，不存在则创建
+            if check_file_exists(source_file_path) and check_file_exists(dest_folder_path):
+                # 移动文件到指定文件夹
+                shutil.move(source_file_path, dest_folder_path)
         except FileExistsError:
             print(f"File '{file_name}' already exists in the destination folder.")
         except Exception as e:
             print(f"An error occurred while moving '{file_name}': {e}")
 
 
-# 划分VOC格式数据集
 def voc_dataset_division(voc_root_folder, xml_file_path, train_proportion=0.7, trainval_proportion=0.8):
     """
     划分voc数据集,并将数据保存在voc数据集格式的对应文件夹下

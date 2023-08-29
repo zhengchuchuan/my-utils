@@ -1,14 +1,7 @@
 import os
 import shutil
-
-# 指定文本文档路径和目标文件夹路径
-
-
-# 打开文本文件并逐行读取文件名
-
-
-# 移动文件
 from my_utils.file_operations.file_batch_processing import copy_files_from_folder
+
 
 if __name__ == '__main__':
     source_folder = r'D:\Documents\DataSet\ZDRH\poppy_top5_more\XmlDrawRect_all'
@@ -22,5 +15,5 @@ if __name__ == '__main__':
     file_name_list = [f for f in os.listdir(folder_path)]
 
     # 移动文件夹中的指定文件
-    copy_files_from_folder(source_folder,destination_folder,file_name_list)
+    copy_files_from_folder(source_folder, destination_folder, file_name_list)
     print("All files moved.")
